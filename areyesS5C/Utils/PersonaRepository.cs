@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SQLite.SQLite3;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace areyesS5C.Utils
 {
@@ -65,6 +67,55 @@ namespace areyesS5C.Utils
                 StatusMessage = string.Format("Error al mostrar", ex.Message);
             }
             return new List<Persona>();
+        }
+
+            public void DeletePersona(int id)
+        {
+            
+            try
+            {
+                init();
+                var person = conn.Table<Persona>().FirstOrDefault(p => p.Id == id);
+
+                if (person != null)                
+                {
+                    conn.Delete(person);
+                    StatusMessage = "Persona eliminada correctamente";
+                }
+                else 
+                {
+                    StatusMessage = "Persona no encontrada";
+                }
+            }
+            catch (Exception ex)
+            {
+
+                StatusMessage = string.Format("Error al eliminar", ex.Message);
+            }
+            
+        }
+
+        public void UpdatePerson(Persona person)
+        {
+            try
+            {
+                init();
+                var existingPerson = conn.Table<Persona>().FirstOrDefault(p => p.Id == person.Id);
+                if (existingPerson != null)
+                {
+                    existingPerson.Nombre = person.Nombre;
+                    conn.Update(existingPerson);
+                    StatusMessage = "Persona modificada correctamente";
+                }
+                else
+                {
+                    StatusMessage = "Persona no encontrada";
+                }
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Error al modificar: {ex.Message}";
+            }
         }
 
 
